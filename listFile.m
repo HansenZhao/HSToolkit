@@ -1,7 +1,7 @@
 function [fileName,filePath] = listFile(spec,path)
     fileName = {}; filePath = {};
     if nargin==1
-        path = pwd;
+        path = uigetdir();
     end
     files = ls(path);
     L = size(files,1);
@@ -10,6 +10,11 @@ function [fileName,filePath] = listFile(spec,path)
     end
     files = mat2cell(files,ones(1,L));
     fileType = strsplit(spec,'.');
+    if strcmp(fileType{1},'*')
+        isExact = 0;
+    else
+        isExact = 1;
+    end
     fileType = fileType{2};
     if strcmp(fileType,'*')
         isSpec = 0;
@@ -26,13 +31,23 @@ function [fileName,filePath] = listFile(spec,path)
             end
         else
             if isSpec
-                name = files{m};
-                name = strtrim(name);
-                nameSpec = strsplit(name,'.');
-                nameSpec = nameSpec{2};
-                if strcmp(nameSpec,fileType)
-                    fileName{end+1} = name;
-                    filePath{end+1} = strcat(path,'\');
+                try
+                    name = files{m};
+                    name = strtrim(name);
+                    if isExact
+                        if strcmp(name,spec)
+                            fileName{end+1} = name;
+                            filePath{end+1} = strcat(path,'\');
+                        end
+                    else               
+                        nameSpec = strsplit(name,'.');
+                        nameSpec = nameSpec{2};
+                        if strcmp(nameSpec,fileType)
+                            fileName{end+1} = name;
+                            filePath{end+1} = strcat(path,'\');
+                        end
+                    end
+                catch
                 end
             end
         end
