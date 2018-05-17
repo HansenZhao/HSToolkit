@@ -11,15 +11,15 @@ function [fileName,filePath] = listFile(spec,path)
     files = mat2cell(files,ones(1,L));
     fileType = strsplit(spec,'.');
     if strcmp(fileType{1},'*')
-        isExact = 0;
+        matchName = [];
     else
-        isExact = 1;
+        matchName = fileType{1};
     end
     fileType = fileType{2};
     if strcmp(fileType,'*')
-        isSpec = 0;
+        matchFormat = [];
     else
-        isSpec = 1;
+        matchFormat = fileType;
     end
     for m = 3:1:L
         if isdir(strcat(path,'\',files{m}))
@@ -30,25 +30,20 @@ function [fileName,filePath] = listFile(spec,path)
                 filePath = [filePath,fp{:}];
             end
         else
-            if isSpec
-                try
-                    name = files{m};
-                    name = strtrim(name);
-                    if isExact
-                        if strcmp(name,spec)
-                            fileName{end+1} = name;
-                            filePath{end+1} = strcat(path,'\');
-                        end
-                    else               
-                        nameSpec = strsplit(name,'.');
-                        nameSpec = nameSpec{2};
-                        if strcmp(nameSpec,fileType)
-                            fileName{end+1} = name;
-                            filePath{end+1} = strcat(path,'\');
-                        end
+            try
+                tmp = files{m};
+                tmp = strtrim(tmp);
+                tmp = strsplit(tmp,'.');
+                fName = tmp{1};
+                fFormat = tmp{2};
+                if isempty(matchFormat) || strcmp(matchFormat,fFormat)
+                    %if strcmp(name,spec)
+                    if regexp(fName,matchName)
+                        fileName{end+1} = files{m};
+                        filePath{end+1} = strcat(path,'\');
                     end
-                catch
                 end
+            catch
             end
         end
     end
