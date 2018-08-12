@@ -1,4 +1,5 @@
 function [newX,newY,newStdU,newStdD] = stdline(x,vec,tags,ha)
+    x = x(:);
     isEqual = length(vec)==length(tags);
     L = length(x);
     [newX,newY,newStdU,newStdD] = deal(zeros(2*L,1));
@@ -33,11 +34,11 @@ function [newX,newY,newStdU,newStdD] = stdline(x,vec,tags,ha)
     newStdD((pointer+1):end) =[];
     
     if exist('ha','var')
-        rectX = [newX;flipud(newX)];
+        rectX = [x(newX);flipud(x(newX))];
         rectY = [newStdU;flipud(newStdD)];
         patch(ha,rectX,rectY,[0.8,0.8,0.8],'EdgeColor','none');
         hold on;
-        plot(ha,newX,newY,'LineWidth',2);
+        plot(ha,x(newX),newY,'LineWidth',2);
         hold off;
     end
 end
