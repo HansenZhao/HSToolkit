@@ -64,5 +64,7 @@ function [fileName,filePath] = listFile(spec,path)
             end
         end
     end
+    fileName = fileName';
+    filePath = filePath';
 end
 
